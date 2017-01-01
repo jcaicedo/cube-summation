@@ -4,8 +4,9 @@
     <div class="row">
       <div class="col-md-12">
         <p>
-          Ingrese datos
+          Por favor cargue un archivo .txt con los datos para calcular el cubo:
         </p>
+
       </div>
     </div>
     <div class="col-md-12">
@@ -13,7 +14,7 @@
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <div class="form-group col-md-12">
           <label for="interaction">Cargue archivo de entrada</label>
-          <input type="file" name="file-input" class="form-control">
+          <input type="file" name="file-input" class="form-control" required accept=".txt">
         </div>
         <div class="col-md-12">
           <button type="button" class="btn btn-default">Calcular</button>
@@ -25,13 +26,20 @@
 
   <div class="container" style="margin-top:36px;">
     <div class="row" id="results">
-      <div class="col-md-6" id="results-inputs">
+      <div class="col-md-6 col-xs-6" id="results-inputs">
 
       </div>
-      <div class="col-md-6" id="results-data">
+      <div class="col-md-6 col-xs-6" id="results-data">
 
       </div>
     </div>
+  </div>
+
+  <div class="footer" style="padding-top: 60px">
+    <p>
+      Desarrollador: Julio Caicedo
+      Correo: caicedo.julio@gmail.com
+    </p>
   </div>
 
 @endsection
