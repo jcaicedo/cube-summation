@@ -25,7 +25,12 @@
 
   <div class="container" style="margin-top:36px;">
     <div class="row" id="results">
+      <div class="col-md-6" id="results-inputs">
 
+      </div>
+      <div class="col-md-6" id="results-data">
+
+      </div>
     </div>
   </div>
 
@@ -50,27 +55,43 @@
           data: new FormData($("#form-file")[0]),
           cache: false,
           contentType: false,
-          processData: false
-        }).done(function(data){
+          processData: false,
+          success:function(data){
 
-          obj=jQuery.parseJSON( data );
+            obj=jQuery.parseJSON( data );
 
-          if(obj.errors.length==0){
-            $("#results").html("");
-            $.each(obj.results, function(i, item) {
-              $("#results").append("<div class='col-md-8 col-md-offset-2 text-center'><p>"+obj.results[i]+"</p></div>");
-            })
+            if(obj.errors.length==0){
+              $("#results-data").html("");
+              $("#results-inputs").html("");
+              $("#results-inputs").append("<h3>Input</h3>");
+              $("#results-data").append("<h3 style='color:green;'>Resultado</h3>");
+              $.each(obj.inputs, function(i, item) {
+                $("#results-inputs").append("<div class='col-md-8 col-md-offset-2'><p>"+obj.inputs[i]+"</p></div>");
+              });
+              $.each(obj.results, function(i, item) {
+                $("#results-data").append("<div class='col-md-8 col-md-offset-2 '><p>"+obj.results[i]+"</p></div>");
+              })
 
 
-          }else{
-            $("#results").html("");
-            $.each(obj.errors, function(i, item) {
-              $("#results").append("<div class='col-md-8 col-md-offset-2 text-center'><p>"+obj.errors[i]+"</p></div>");
-            })
+            }else{
+              $("#results-data").html("");
+              $("#results-inputs").html("");
+              $("#results-inputs").append("<h3>Input</h3>");
+              $("#results-data").append("<h3 style='color:red;'>Errores</h3>");
+              $.each(obj.inputs, function(i, item) {
+                $("#results-inputs").append("<div class='col-md-8 col-md-offset-2'><p>"+obj.inputs[i]+"</p></div>");
+              });
+              $.each(obj.errors, function(i, item) {
+                $("#results-data").append("<div class='col-md-8 col-md-offset-2 text-center'><p style='color:red;'>"+obj.errors[i]+"</p></div>");
+              })
+            }
+          },
+          error:function(data){
+
           }
         });
+
       });
-      ;
     });
     </script>
   @endpush

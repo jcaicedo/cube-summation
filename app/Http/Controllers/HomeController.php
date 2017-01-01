@@ -15,17 +15,22 @@ class HomeController extends Controller
     $error=[];
     $data =[];
     $results=[];
+    $input = [];
     $n=0;
 
     if ($request->hasFile('file-input')) {
       $file = $request->file('file-input')->getPathName();
 
       $fh = fopen($file,'r');
-      $test_cases = (int)trim(fgets($fh)) ; //numero de casos
+      $line=fgets($fh);
+      $input[]=$line;
+      $test_cases = (int)trim($line) ; //numero de casos
+
       if ((1<=$test_cases)&&($test_cases<=50)) {
         while($n<$test_cases){
-
-          $line = $this->clearLine(fgets($fh));
+          $line=fgets($fh);
+          $input[]=$line;
+          $line = $this->clearLine($line);
           if (!feof($fh)) {
             $size_matriz = (int)$line[0]; //tamaño de la matriz
             $number_operations=(int)$line[1]; //numero de operaciones
@@ -35,7 +40,9 @@ class HomeController extends Controller
               if((1<=$number_operations)&&($number_operations<=1000)){
 
                 for ($r=0; $r < $number_operations ; $r++) {
-                  $line = $this->clearLine(fgets($fh));  //clear line
+                  $line=fgets($fh);
+                  $input[]=$line;
+                  $line = $this->clearLine($line);  //clear line
 
 
                   switch ($line[0]) {
@@ -50,15 +57,20 @@ class HomeController extends Controller
                     break;
 
                     case 'QUERY':
-                    if (!(1<=(int)$line[1]) && !((int)$line[1]<(int)$line[4]) && !((int)$line[4]<=$size_matriz)) {
-                      $error[] = "Los valores para x en la iteracion ".($n+1)." de la operación ".$line[0]." debe cumplie con 1<=x1<=x2<=N";
+
+                    if ((1>(int)$line[1]) || ((int)$line[1]>(int)$line[4]) || ((int)$line[4]>$size_matriz)) {
+                      $error[] = "Los valores para x en la iteracion ".($n+1)." de la operación ".($r+1)." de  ".$line[0]." debe cumplie con 1<=x1<=x2<=N";
+
                     }else{
-                      if (!(1<=(int)$line[2]) && !((int)$line[2]<(int)$line[5]) && !((int)$line[5]<=$size_matriz)) {
-                        $error[] = "Los valores para y en la iteracion ".($n+1)." de la operación ".$line[0]." debe cumplie con 1<=y1<=y2<=N";
+                      if ((1>(int)$line[2]) || ((int)$line[2]>(int)$line[5]) || ((int)$line[5]>$size_matriz)) {
+                        $error[] = "Los valores para y en la iteracion ".($n+1)." de la operación ".($r+1)." de  ".$line[0]." debe cumplie con 1<=y1<=y2<=N";
+
                       }else{
-                        if (!(1<=(int)$line[3]) && !((int)$line[3]<(int)$line[6]) && !((int)$line[6]<=$size_matriz)) {
-                          $error[] = "Los valores para z en la iteracion ".($n+1)." de la operación ".$line[0]." debe cumplie con 1<=z1<=z2<=N";
+                        if ((1>(int)$line[3]) || ((int)$line[3]>(int)$line[6]) || ((int)$line[6]>$size_matriz)) {
+                          $error[] = "Los valores para z en la iteracion ".($n+1)." de la operación ".($r+1)." de ".$line[0]." debe cumplie con 1<=z1<=z2<=N";
+
                         }else{
+
                           $results[]=$this->cubeSummation($line,$matriz);
                         }
                       }
@@ -89,92 +101,14 @@ class HomeController extends Controller
 
       fclose($fh);
       $data['errors']=$error;
+      $data['inputs']=$input;
       $data['results']=$results;
       return $data;
     }else{
-      dd('no');
+      $data['errors']= $error[]="no existe data o el formato de archivo no es correcto";
+      $data['inputs']= $input;
+      return $data;
     }
-  }
-
-
-  public function processFile($file){
-    $error=[];
-    $data = [];
-    $fh = fopen($file,'r');
-    $data =[];
-    $results=[];
-    $n=0;
-
-    $test_cases = (int)trim(fgets($fh)) ; //numero de casos
-    if ((1<=$test_cases)&&($test_cases<=50)) {
-      while($n<$test_cases){
-
-        $line = $this->clearLine(fgets($fh));
-        if (!feof($fh)) {
-          $size_matriz = (int)$line[0]; //tamaño de la matriz
-          $number_operations=(int)$line[1]; //numero de operaciones
-          $matriz = $this->createMatriz($size_matriz);
-
-          if ((1<=$size_matriz)&&($size_matriz<=100)) {
-            if((1<=$number_operations)&&($number_operations<=1000)){
-
-              for ($r=0; $r < $number_operations ; $r++) {
-                $line = $this->clearLine(fgets($fh));  //clear line
-
-
-                switch ($line[0]) {
-
-                  case 'UPDATE':
-                  if ((1<=$line[1])&&(1<=$line[2])&&(1<=$line[3])&&($line[1]<=$size_matriz)&&($line[2]<=$size_matriz)&&($line[3]<=$size_matriz)&&(pow(-10, 9)<=$line[4])&&($line[4]<=pow(10, 9))) {
-                    $matriz[$line[1]][$line[2]][$line[3]]=(int)$line[4];
-                  }else{
-                    $error[]="Error en UPDATE ".$r." de la iteración: ".($n+1).", donde 1 <= x,y,z <= N y -10^9 <= W <= 10^9 ";
-                  }
-
-                  break;
-
-                  case 'QUERY':
-                  if (!(1<=(int)$line[1]) && !((int)$line[1]<(int)$line[4]) && !((int)$line[4]<=$size_matriz)) {
-                    $error[] = "Los valores para x en la iteracion ".($n+1)." de la operación ".$line[0]." debe cumplie con 1<=x1<=x2<=N";
-                  }else{
-                    if (!(1<=(int)$line[2]) && !((int)$line[2]<(int)$line[5]) && !((int)$line[5]<=$size_matriz)) {
-                      $error[] = "Los valores para y en la iteracion ".($n+1)." de la operación ".$line[0]." debe cumplie con 1<=y1<=y2<=N";
-                    }else{
-                      if (!(1<=(int)$line[3]) && !((int)$line[3]<(int)$line[6]) && !((int)$line[6]<=$size_matriz)) {
-                        $error[] = "Los valores para z en la iteracion ".($n+1)." de la operación ".$line[0]." debe cumplie con 1<=z1<=z2<=N";
-                      }else{
-                        $results[]=$this->cubeSummation($line,$matriz);
-                      }
-                    }
-                  }
-
-
-                  break;
-
-                }
-              }
-
-            }else{
-              $error[]="El valor de M debe ser 1<=M<=1000 en la iteracion #".($n+1);
-            }
-          }else{
-            $error[]="El valor de N debe ser 1<=N<=100 en la iteracion #".($n+1);
-          }
-          $n++;
-        }else{
-          $error[]="No concuerda el valor de T con la cantidad de casos";
-          break;
-        }
-
-      }
-    }else{
-      $error[]="El valor de T debe ser 1<=T<=50";
-    }
-
-    fclose($fh);
-    $data['errors']=$error;
-    $data['results']=$results;
-    dd( $data);
   }
 
   //Descomposicion de la linea de archivo
@@ -212,4 +146,6 @@ class HomeController extends Controller
     }
     return $summation;
   }
+
+
 }
