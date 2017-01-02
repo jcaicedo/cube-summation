@@ -28,7 +28,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ## Installation
 
-1. clone project form [git](git@github.com:jcaicedo/cube-summation.git)
+1. clone project
 2. set up the virtual host with the document root `www/public`
 3. run `composer install` (developent) or `composer install --no-dev` (production)
 4. run `bower install`
