@@ -34,5 +34,5 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 4. run `bower install`
 5. rename `.env.example` to `.env` an configure the applcation settings
 6. run `php artisan key:generate`
-6. run `php artisan migrate`
+6. (Optional) run `php artisan migrate`
 7. (Optional) run `php artisan db:seed`
